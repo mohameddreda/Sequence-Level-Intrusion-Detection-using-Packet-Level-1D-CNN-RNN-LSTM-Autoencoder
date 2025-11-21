@@ -1,0 +1,17 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+tf-env/
+
+# VS Code workspace
+.vscode/
+
+# Model artifacts (if you choose not to track)
+# models/saved_models/autoencoder_best.h5
+# models/saved_models/*.keras
+# models/saved_models/*.h5
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
