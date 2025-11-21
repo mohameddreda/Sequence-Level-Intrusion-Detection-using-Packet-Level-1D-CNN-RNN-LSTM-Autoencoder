@@ -32,3 +32,7 @@ if errors:
     sys.exit(1)
 print('All .py files compile successfully')
 PY
+
+      - name: Run lightweight smoke checks
+        run: |
+          python scripts/smoke_check.py
