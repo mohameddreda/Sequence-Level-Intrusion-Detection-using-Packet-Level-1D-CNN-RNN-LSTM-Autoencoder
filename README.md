@@ -19,7 +19,7 @@ Short, reproducible implementation of a sequence-level intrusion detection pipel
 
 --
 
-## Quick Start (recommended for instructors)
+## Quick Start
 
 1. Clone the repository and change directory:
 
@@ -92,7 +92,3 @@ This generates `results/plots/confusion_matrix.png`, `results/plots/error_distri
 
 - Licensed under the MIT License  see `LICENSE`.
 - See `CONTRIBUTING.md` for developer setup and notes.
-
---
-
-If you want, I can add a one-page "Instructor Quick View" script that opens the report and images automatically. Say `yes` to add it.
