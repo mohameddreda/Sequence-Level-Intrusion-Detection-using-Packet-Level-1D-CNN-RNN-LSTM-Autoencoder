@@ -1,9 +1,5 @@
 # Contributing
 
-Thank you for contributing. For this project we aim to keep the repository easy to run and review by your instructor.
-
-Development workflow (recommended)
-
 - Create a virtual environment and install dependencies:
 
 ```powershell
