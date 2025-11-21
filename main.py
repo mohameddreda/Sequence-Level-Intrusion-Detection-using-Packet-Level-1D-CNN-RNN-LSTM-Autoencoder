@@ -94,7 +94,18 @@ def main():
         
         # Plot results
         print("\n📊 Generating visualizations...")
-        visualizer.plot_confusion_matrix(data_dict['y_test'], test_predictions)
+        # Ensure results directories
+        os.makedirs(os.path.join('results', 'plots'), exist_ok=True)
+        os.makedirs(os.path.join('results', 'reports'), exist_ok=True)
+
+        cm_fig = visualizer.plot_confusion_matrix(data_dict['y_test'], test_predictions)
+        # Save confusion matrix
+        cm_path = os.path.join('results', 'plots', 'confusion_matrix.png')
+        try:
+            cm_fig.savefig(cm_path)
+            print(f"Saved confusion matrix to {cm_path}")
+        except Exception as e:
+            print(f"Failed to save confusion matrix: {e}")
         
         # Plot error distribution
         normal_test_indices = np.where(data_dict['y_test'] == 0)[0]
@@ -105,6 +116,14 @@ def main():
             attack_errors = test_errors[attack_test_indices]
             
             detector.plot_error_distribution(normal_errors, attack_errors)
+            # Save error distribution figure
+            try:
+                err_fig = detector.plot_error_distribution(normal_errors, attack_errors)
+                err_path = os.path.join('results', 'plots', 'error_distribution.png')
+                err_fig.savefig(err_path)
+                print(f"Saved error distribution to {err_path}")
+            except Exception as e:
+                print(f"Failed to save error distribution: {e}")
         
         plt.show()
 
@@ -138,8 +157,40 @@ def main():
             print(f"⚠️ Error in unsupervised anomaly detection: {e}")
             import traceback
             traceback.print_exc()
-        
-        
+        # Write a short text report with metrics
+        try:
+            from sklearn.metrics import accuracy_score, roc_auc_score, classification_report
+
+            global_acc = accuracy_score(data_dict['y_test'], test_predictions)
+            global_roc = roc_auc_score(data_dict['y_test'], test_errors)
+            global_clf = classification_report(data_dict['y_test'], test_predictions, target_names=['Normal', 'Attack'])
+
+            per_feature_acc = np.mean(pf_preds == data_dict['y_test'])
+            per_feature_clf = classification_report(data_dict['y_test'], pf_preds, target_names=['Normal', 'Attack'])
+
+            report_lines = []
+            report_lines.append('Anomaly Detection Report')
+            report_lines.append('=' * 60)
+            report_lines.append('\n-- Global (tuned) threshold results --')
+            report_lines.append(f'Threshold: {detector.threshold:.6f}')
+            report_lines.append(f'Accuracy: {global_acc:.6f}')
+            report_lines.append(f'ROC AUC: {global_roc:.6f}')
+            report_lines.append('\nClassification Report:\n')
+            report_lines.append(global_clf)
+            report_lines.append('\n-- Per-feature thresholding (fixed) results --')
+            report_lines.append(f'Per-feature accuracy: {per_feature_acc:.6f}')
+            report_lines.append('\nClassification Report:\n')
+            report_lines.append(per_feature_clf)
+
+            report_text = '\n'.join(report_lines)
+            report_path = os.path.join('results', 'reports', 'report.txt')
+            with open(report_path, 'w') as rf:
+                rf.write(report_text)
+
+            print(f"Saved textual report to {report_path}")
+        except Exception as e:
+            print(f"Failed to write report: {e}")
+
         print("\n✅ Hybrid CNN+LSTM Autoencoder completed successfully!")
         
     except Exception as e:
